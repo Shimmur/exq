@@ -249,6 +249,7 @@ defmodule Exq.Manager.Server do
     rescue_timeout({state, state.poll_timeout}, fn ->
       jobs = Exq.Redis.JobQueue.dequeue(state.redis, state.namespace, state.node_id, queues)
       IO.puts("Number of jobs fetched from queue: #{length(jobs)}")
+      IO.inspect(state)
       job_results = jobs |> Enum.map(fn(potential_job) -> dispatch_job(state, potential_job) end)
    
       cond do
