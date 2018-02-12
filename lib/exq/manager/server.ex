@@ -247,17 +247,12 @@ defmodule Exq.Manager.Server do
   def dequeue_and_dispatch(state, []), do: {state, state.poll_timeout}
   def dequeue_and_dispatch(state, queues) do
     rescue_timeout({state, state.poll_timeout}, fn ->
-      IO.puts("about to fetch jobs from queues\n")
       jobs = Exq.Redis.JobQueue.dequeue(state.redis, state.namespace, state.node_id, queues)
-      IO.inspect(jobs)
-      IO.puts("\n")
+      IO.puts("Number of jobs fetched from queue: #{lenght(jobs)}")
       job_results = jobs |> Enum.map(fn(potential_job) -> dispatch_job(state, potential_job) end)
-      IO.puts("Job results\n")
-      IO.inspect(job_results)
+   
       cond do
         Enum.any?(job_results, fn(status) -> elem(status, 1) == :dispatch end) ->
-          IO.puts("Inside cond-1\n")
-          IO.puts("This is my timeout #{state.poll_timeout}\n")
           {state, state.poll_timeout}
         Enum.any?(job_results, fn(status) -> elem(status, 0) == :error end) ->
           Logger.error("Redis Error #{Kernel.inspect(job_results)}}.  Backing off...")
