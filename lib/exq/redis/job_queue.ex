@@ -91,7 +91,7 @@ defmodule Exq.Redis.JobQueue do
       ["RPOPLPUSH", queue_key(namespace, queue), backup_queue_key(namespace, node_id, queue)]
     end)
     resp = Connection.qp(redis, deq_commands)
-    IO.puts("List of queues: #{queues})
+    IO.puts("List of queues: #{queues}")
     IO.inspect(resp)
     case resp do
       {:error, reason} -> [{:error, reason}]
