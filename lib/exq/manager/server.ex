@@ -254,7 +254,7 @@ defmodule Exq.Manager.Server do
    
       cond do
         Enum.any?(job_results, fn(status) -> elem(status, 1) == :dispatch end) ->
-          {state, 0}
+          {state, 10000}
         Enum.any?(job_results, fn(status) -> elem(status, 0) == :error end) ->
           Logger.error("Redis Error #{Kernel.inspect(job_results)}}.  Backing off...")
           {state, state.poll_timeout * @backoff_mult}
